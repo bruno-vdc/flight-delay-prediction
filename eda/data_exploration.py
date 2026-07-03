@@ -1,7 +1,6 @@
 # =========== libraries ===========
 # %%
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
@@ -89,6 +88,9 @@ plt.xticks(rotation=45, ha="right")
 #adjust spacing
 plt.tight_layout()
 
+#saving the figure
+plt.savefig(IMAGES_DIR / "missing_values.png", dpi=300, bbox_inches="tight")
+
 #show figure
 plt.show()
 
@@ -98,47 +100,7 @@ corr = df_flights[hm_cols].corr()
 plt.figure(figsize=(14, 12))
 sns.heatmap(corr, annot=True, cmap="coolwarm", center=0)
 plt.title("Correlation Matrix")
-plt.show()
-
-# %%
-#most frequent airlines
-df_freq_airlines = df_flights['AIRLINE'].value_counts().to_frame(name="frequency").reset_index()
-df_freq_airlines = df_freq_airlines.sort_values(by="frequency", ascending=True).reset_index(drop=True)
-
-plt.figure(figsize=(8, 5))
-
-# Plot
-plt.barh(df_freq_airlines["AIRLINE"], df_freq_airlines["frequency"])
-
-# Customize
-plt.title("Airlines Frequency")
-plt.xlabel("Frequency")
-plt.ylabel("Airlines")
-
-# Adjust spacing
-plt.tight_layout()
-
-# Show figure
-plt.show()
-
-#most delayed airlines
-df_temp = percentage_dataframe(df_flights, "AIRLINE", "percentage_delayed")
-
-#plotting delay rates
-plt.figure(figsize=(9, 5))
-
-plt.bar(df_temp["AIRLINE"], df_temp["percentage_delayed"])
-
-#customize
-plt.title("Delay Rate by Airline")
-plt.xlabel("Airlines")
-plt.ylabel("Delay Rate (%)")
-plt.xticks(rotation=45, ha="right")
-
-#adjust spacing
-plt.tight_layout()
-
-#show figure
+plt.savefig(IMAGES_DIR / "correlation_heatmap.png", dpi=300, bbox_inches="tight")
 plt.show()
 
 # %%
@@ -158,32 +120,80 @@ ax[1].set_title("Arrival Delay Distribution")
 ax[1].set_xlabel("Arrival Delay (minutes)")
 ax[1].set_ylabel("Frequency")
 
-# Improve spacing
+#improve spacing
 plt.tight_layout()
 
-# Show figure
+#saving the figure
+plt.savefig(IMAGES_DIR / "delay_distributions.png", dpi=300, bbox_inches="tight")
+
+#show figure
 plt.show()
 
 # %%
-#most delayed months
-df_temp = percentage_dataframe(df_flights, "month", "percentage_delayed")
+#airline frequency and delay rates
+df_temp = percentage_dataframe(df_flights, "AIRLINE", "total_flights")
 
-#plotting delay rates
-plt.figure(figsize=(9, 5))
+#plotting
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 6))
 
-plt.bar(df_temp["month"], df_temp["percentage_delayed"])
+#airlines frequency
+ax[0].bar(df_temp["AIRLINE"], df_temp["total_flights"])
+ax[0].set_title("Airlines Frequency")
+ax[0].set_xlabel("Airlines")
+ax[0].set_ylabel("Frequency")
+ax[0].tick_params(axis="x", labelrotation=80)
 
-month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+#arrival delay distribution
+df_temp = df_temp.sort_values(by="percentage_delayed", ascending=False).reset_index(drop=True)
 
-#customize
-plt.title("Delay Rate by Month")
-plt.xlabel("Month")
-plt.ylabel("Delay Rate (%)")
-plt.xticks(rotation=45, ha="right")
-plt.xticks(range(1, 13), month_labels)
+ax[1].bar(df_temp["AIRLINE"], df_temp["percentage_delayed"])
+ax[1].set_title("Arrival Delay Distribution")
+ax[1].set_xlabel("Airlines")
+ax[1].set_ylabel("Delay Rate (%)")
+ax[1].tick_params(axis="x", labelrotation=80)
 
 #adjust spacing
 plt.tight_layout()
+
+#saving the figure
+plt.savefig(IMAGES_DIR / "airline_frequency_delay.png", dpi=300, bbox_inches="tight")
+
+#show figure
+plt.show()
+
+# %%
+#monthly demand and delay rates
+df_temp = percentage_dataframe(df_flights, "month", "total_flights")
+
+month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+#plotting
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 6))
+
+#monthly demand
+ax[0].bar(df_temp["month"], df_temp["total_flights"])
+ax[0].set_title("Monthly Demand")
+ax[0].set_xlabel("Month")
+ax[0].set_ylabel("Total Flights")
+ax[0].set_xticks(range(1, 13))
+ax[0].set_xticklabels(month_labels)
+
+#delay rate by month
+df_temp = df_temp.sort_values(by="percentage_delayed", ascending=False).reset_index(drop=True)
+
+#monthly demand
+ax[1].bar(df_temp["month"], df_temp["percentage_delayed"])
+ax[1].set_title("Monthly Delay Rate")
+ax[1].set_xlabel("Month")
+ax[1].set_ylabel("Delay Rate (%)")
+ax[1].set_xticks(range(1, 13))
+ax[1].set_xticklabels(month_labels)
+
+#adjust spacing
+plt.tight_layout()
+
+#saving the figure
+plt.savefig(IMAGES_DIR / "monthly_delay_rates.png", dpi=300, bbox_inches="tight")
 
 #show figure
 plt.show()
@@ -200,7 +210,7 @@ ax[0].bar(df_temp["origin_state"], df_temp["percentage_delayed"])
 ax[0].set_title("Arrival Delay by Origin State")
 ax[0].set_xlabel("Origin State")
 ax[0].set_ylabel("Delay Rate (%)")
-ax[0].tick_params(axis="x", labelrotation=60)
+ax[0].tick_params(axis="x", labelrotation=90)
 
 #delay by destination state
 df_temp = percentage_dataframe(df_flights, "dest_state", "percentage_delayed")
@@ -209,10 +219,13 @@ ax[1].bar(df_temp["dest_state"], df_temp["percentage_delayed"])
 ax[1].set_title("Arrival Delay by Destination State")
 ax[1].set_xlabel("Destination State")
 ax[1].set_ylabel("Delay Rate (%)")
-ax[1].tick_params(axis="x", labelrotation=60)
+ax[1].tick_params(axis="x", labelrotation=90)
 
 # Improve spacing
 plt.tight_layout()
+
+#saving the figure
+plt.savefig(IMAGES_DIR / "delay_by_states.png", dpi=300, bbox_inches="tight")
 
 # Show figure
 plt.show()
