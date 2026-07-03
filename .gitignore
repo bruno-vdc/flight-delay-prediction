@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Large datasets
+data/flights_sample_3m.csv
+
