@@ -13,7 +13,7 @@ pd.set_option('display.max_rows', 10)      #rows
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 DATA_DIR = PROJECT_ROOT / 'data'
-IMAGES_DIR = PROJECT_ROOT / 'images'
+IMAGES_DIR = PROJECT_ROOT / 'images/eda'
 
 df_flights = pd.read_csv(DATA_DIR / 'flights_sample_3m.csv')
 
