@@ -18,8 +18,16 @@ df_flights = pd.read_csv(DATA_DIR / 'flights_sample_3m.csv')
 df_flights.head(10)
 
 # %%
-#=========== removing cancelled flights ===========
+#=========== correcting duplicated cities names ===========
+df_flights['ORIGIN_CITY'] = np.where(df_flights['ORIGIN_CITY']=='CONCORD, NC', 'Concord, NC', df_flights['ORIGIN_CITY'])
+df_flights['DEST_CITY'] = np.where(df_flights['DEST_CITY']=='CONCORD, NC', 'Concord, NC', df_flights['DEST_CITY'])
+
+#=========== removing unnecessary flights ===========
+#cancelled flights
 df_flights_proc = df_flights.query('CANCELLED==0').reset_index(drop=True)
+
+#TT state flights
+df_flights_proc = df_flights_proc.query("ORIGIN not in ['GUM', 'PPG', 'SPN'] and DEST not in ['GUM', 'PPG', 'SPN']").reset_index(drop=True)
 
 #=========== dropping unnecessary columns and missing values ===========
 df_flights_proc = df_flights_proc.drop(columns=['CANCELLED', 'CANCELLATION_CODE', 'DELAY_DUE_CARRIER', 'DELAY_DUE_WEATHER',
