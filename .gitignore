@@ -4,3 +4,4 @@
 # Large datasets
 data/flights_sample_3m.csv
 data/flights_sample_proc.csv
+data/flights_featured.csv
