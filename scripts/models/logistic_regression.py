@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 MODEL_NAME = 'Logistic Regression'
 MAX_ITER = 2000
 CLASS_WEIGHT = "balanced"
-SOLVER = "lbfgs"
+SOLVER = "newton-cholesky"
 
 def train(X_train, y_train):
 
