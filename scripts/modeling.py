@@ -56,7 +56,7 @@ X_test_tran = col_tran.transform(X_test)
 #=========== model run ===========
 unbalanced_weight = MODEL.unbalanced_classes(y_train)
 
-with mlflow.start_run(run_name="XGBoost - Baseline"):
+with mlflow.start_run(run_name="XGBoost - New Split"):
     
     model = MODEL.train(X_train_tran, y_train, unbalanced_weight, CONFIG.RANDOM_STATE)
 
