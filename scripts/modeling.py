@@ -64,6 +64,9 @@ with mlflow.start_run(run_name="Random Forest - Deeper"):
     mlflow.log_param("n_estimatores", MODEL.N_ESTIMATORS)
     mlflow.log_param("max_depth", MODEL.MAX_DEPTH)
     mlflow.log_param("class_weight", MODEL.CLASS_WEIGHT)
+    
+    mlflow.log_param("min_samples_leaf", MODEL.MIN_LEAF)
+    mlflow.log_param("min_samples_split ", MODEL.MIN_SPLIT)
 
     EVAL.model_metrics(y_test, y_pred)
     
