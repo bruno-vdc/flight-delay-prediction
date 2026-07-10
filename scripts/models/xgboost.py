@@ -5,7 +5,7 @@ from xgboost import XGBClassifier
 MODEL_NAME = 'XGBoost'
 N_ESTIMATORS = 100
 MAX_DEPTH = 10
-LEARNING_RATE = 0.3
+LEARNING_RATE = 0.5
 EVAL_METRIC = "logloss"
 
 def unbalanced_classes(y_train):
