@@ -3,9 +3,9 @@ from sklearn.linear_model import LogisticRegression
 
 # =========== variables and functions ===========
 MODEL_NAME = 'Logistic Regression'
-MAX_ITER = 2000
+MAX_ITER = 7
 CLASS_WEIGHT = "balanced"
-SOLVER = "newton-cholesky"
+SOLVER = "lbfgs"
 
 def train(X_train, y_train):
 
