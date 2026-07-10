@@ -8,7 +8,7 @@ import config as CONFIG
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
-import models.random_forest as MODEL
+import models.xgboost as MODEL
 import evaluation.model_evaluation as EVAL
 from sklearn.metrics import classification_report, confusion_matrix
 
@@ -54,19 +54,20 @@ X_test_tran = col_tran.transform(X_test)
 
 # %%
 #=========== model run ===========
-with mlflow.start_run(run_name="Random Forest - Deeper"):
+unbalanced_weight = MODEL.unbalanced_classes(y_train)
+
+with mlflow.start_run(run_name="XGBoost - Baseline"):
     
-    model = MODEL.train(X_train_tran, y_train, CONFIG.RANDOM_STATE)
+    model = MODEL.train(X_train_tran, y_train, unbalanced_weight, CONFIG.RANDOM_STATE)
 
     y_pred = model.predict(X_test_tran)
 
     mlflow.log_param("model", MODEL.MODEL_NAME)
     mlflow.log_param("n_estimatores", MODEL.N_ESTIMATORS)
     mlflow.log_param("max_depth", MODEL.MAX_DEPTH)
-    mlflow.log_param("class_weight", MODEL.CLASS_WEIGHT)
-    
-    mlflow.log_param("min_samples_leaf", MODEL.MIN_LEAF)
-    mlflow.log_param("min_samples_split ", MODEL.MIN_SPLIT)
+    mlflow.log_param("learning_rate", MODEL.LEARNING_RATE)
+    mlflow.log_param("scale_pos_weight", unbalanced_weight)
+    mlflow.log_param("eval_metric ", MODEL.EVAL_METRIC)
 
     EVAL.model_metrics(y_test, y_pred)
     
