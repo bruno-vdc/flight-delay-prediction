@@ -40,7 +40,20 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=
 original_cols = X_train.columns.tolist()
 
 #=========== adding new features ===========
+#route delay rate
 X_train, X_test = EXTRA_FT.add_route_delay_rate(X_train, X_test, y_train, CONFIG.TARGET, EXTRA_FT.MIN_FLIGHTS)
+
+#origin delay rate
+X_train, X_test = EXTRA_FT.add_delay_rate_feature(X_train, X_test, y_train, CONFIG.TARGET, group_column="ORIGIN", feature_name="origin_delay_rate")
+
+#destination delay rate
+X_train, X_test = EXTRA_FT.add_delay_rate_feature(X_train, X_test, y_train, CONFIG.TARGET, group_column="DEST", feature_name="dest_delay_rate")
+
+#airline delay rate
+X_train, X_test = EXTRA_FT.add_delay_rate_feature(X_train, X_test, y_train, CONFIG.TARGET, group_column="AIRLINE_CODE", feature_name="airline_delay_rate")
+
+#departure congestion
+X_train, X_test = EXTRA_FT.add_departure_congestion(X_train, X_test, 30, "absolute")
 
 #new numerical features
 new_numerical_features = [col for col in X_train.columns if col not in original_cols]
@@ -68,12 +81,12 @@ X_test_tran = col_tran.transform(X_test)
 # %%
 #=========== models run ===========
 #logistic regression
-with mlflow.start_run(run_name="Logistic Regression - New Features"):
+with mlflow.start_run(run_name="Logistic Regression - Features V6"):
     model = MODEL_LR.train(X_train_tran, y_train)
 
     y_pred = model.predict(X_test_tran)
 
-    mlflow.set_tag("feature_set", "v2_route_delay_rate")
+    mlflow.set_tag("feature_set", "v6_absolute_congestion")
 
     mlflow.log_param("model", MODEL_LR.MODEL_NAME)
     mlflow.log_param("max_iter", MODEL_LR.MAX_ITER)
@@ -86,14 +99,15 @@ with mlflow.start_run(run_name="Logistic Regression - New Features"):
 
 print(classification_report(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
+print(model.n_iter_)
 
 #random forest
-with mlflow.start_run(run_name="Random Forest - New Features"):
+with mlflow.start_run(run_name="Random Forest - Features V6"):
     model = MODEL_RF.train(X_train_tran, y_train, CONFIG.RANDOM_STATE)
 
     y_pred = model.predict(X_test_tran)
 
-    mlflow.set_tag("feature_set", "v2_route_delay_rate")
+    mlflow.set_tag("feature_set", "v6_absolute_congestion")
 
     mlflow.log_param("model", MODEL_RF.MODEL_NAME)
     mlflow.log_param("n_estimatores", MODEL_RF.N_ESTIMATORS)
@@ -112,13 +126,12 @@ print(confusion_matrix(y_test, y_pred))
 #xgboost
 unbalanced_weight = MODEL_XGB.unbalanced_classes(y_train)
 
-with mlflow.start_run(run_name="XGBoost - New Features"):
-    
+with mlflow.start_run(run_name="XGBoost - Features V6"):
     model = MODEL_XGB.train(X_train_tran, y_train, unbalanced_weight, CONFIG.RANDOM_STATE)
 
     y_pred = model.predict(X_test_tran)
 
-    mlflow.set_tag("feature_set", "v2_route_delay_rate")
+    mlflow.set_tag("feature_set", "v6_absolute_congestion")
 
     mlflow.log_param("model", MODEL_XGB.MODEL_NAME)
     mlflow.log_param("n_estimatores", MODEL_XGB.N_ESTIMATORS)
@@ -135,13 +148,12 @@ print(classification_report(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
 
 #lightgbm
-with mlflow.start_run(run_name="LightGBM - New Features"):
-    
+with mlflow.start_run(run_name="LightGBM - Features V6"):
     model = MODEL_LGBM.train(X_train_tran, y_train, CONFIG.RANDOM_STATE)
 
     y_pred = model.predict(X_test_tran)
 
-    mlflow.set_tag("feature_set", "v2_route_delay_rate")
+    mlflow.set_tag("feature_set", "v6_absolute_congestion")
 
     mlflow.log_param("model", MODEL_LGBM.MODEL_NAME)
     mlflow.log_param("max_depth", MODEL_LGBM.MAX_DEPTH)

@@ -3,7 +3,7 @@ from sklearn.linear_model import LogisticRegression
 
 # =========== variables and functions ===========
 MODEL_NAME = 'Logistic Regression'
-MAX_ITER = 7
+MAX_ITER = 20
 CLASS_WEIGHT = "balanced"
 SOLVER = "lbfgs"
 
