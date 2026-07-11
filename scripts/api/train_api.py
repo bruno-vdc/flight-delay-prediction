@@ -1,5 +1,6 @@
 # =========== libraries ===========
 import pandas as pd
+import numpy as np
 from pathlib import Path
 import sys
 
@@ -61,6 +62,12 @@ def train_model():
 
     model = MODEL_XGB.train(X_train_tran, y_train, unbalanced_weight, CONFIG.RANDOM_STATE)
 
+    X_test_tran = col_tran.transform(X_test)
+
+    test_probabilities = model.predict_proba(X_test_tran)[:, 1]
+
+    risk_thresholds = np.quantile(test_probabilities, [0.25, 0.50, 0.75])
+
     return {"model": model,
             "transformer": col_tran,
             "training_columns": X_train.columns.tolist(),
@@ -68,4 +75,6 @@ def train_model():
             "new_features": new_numerical_features,
             "reference_data": X_train.copy(),
             "y_train": y_train.copy(),
-            "X_train": X_train.copy()}
+            "X_train": X_train.copy(),
+            "risk_thresholds": risk_thresholds,
+            "latest_training_year": flights_featured["year"].max()}

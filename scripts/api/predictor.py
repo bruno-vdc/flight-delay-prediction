@@ -8,6 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
 
 import config as CONFIG
+from insights import generate_insights
 
 # =========== functions ===========
 def _time_to_minutes(time_str: str) -> int:
@@ -89,15 +90,24 @@ def predict(request, pipeline):
 
     probability = float(model.predict_proba(X)[0, 1])
 
-    if probability < 0.30:
-        risk = "Low"
-    elif probability < 0.60:
-        risk = "Medium"
-    elif probability < 0.80:
-        risk = "High"
+    thresholds = pipeline["risk_thresholds"]
+
+    q1, q2, q3 = thresholds
+
+    if probability<q1:
+        risk = "Lower Risk"
+    elif probability<q2:
+        risk = "Moderate Risk"
+    elif probability<q3:
+        risk = "Elevated Risk"
     else:
-        risk = "Very High"
+        risk = "Highest Risk"
+
+    latest_training_year = pipeline["latest_training_year"]
+
+    result = generate_insights(df, reference_data, latest_training_year)
 
     return {"delay_probability": round(probability * 100, 2),
             "risk": risk,
-            "prepared_data": df}
+            "insights": result["insights"],
+            "warning": result["warning"]}
