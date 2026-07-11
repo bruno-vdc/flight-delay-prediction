@@ -9,8 +9,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 import extra_features as EXTRA_FT
-import models.logistic_regression as MODEL_LR
-import models.random_forest as MODEL_RF
 import models.xgboost as MODEL_XGB
 import models.lightgbm as MODEL_LGBM
 import evaluation.model_evaluation as EVAL
@@ -39,6 +37,15 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=
 #original columns
 original_cols = X_train.columns.tolist()
 
+#=========== feature selection ===========
+EXCLUDED_FEATURES = ["dest_delay_rate", "origin_delay_rate", "origin_contiguous", "distance_category", "dest_contiguous", "is_holiday", "year"]
+
+nominal_features = [f for f in CONFIG.NOMINAL_FEATURES if f not in EXCLUDED_FEATURES]
+
+ordinal_features = [f for f in CONFIG.ORDINAL_FEATURES if f not in EXCLUDED_FEATURES]
+
+numerical_features = [f for f in CONFIG.NUMERICAL_FEATURES if f not in EXCLUDED_FEATURES]
+
 #=========== adding new features ===========
 #route delay rate
 X_train, X_test = EXTRA_FT.add_route_delay_rate(X_train, X_test, y_train, CONFIG.TARGET, EXTRA_FT.MIN_FLIGHTS)
@@ -56,7 +63,7 @@ X_train, X_test = EXTRA_FT.add_delay_rate_feature(X_train, X_test, y_train, CONF
 X_train, X_test = EXTRA_FT.add_departure_congestion(X_train, X_test, 30, "normalized")
 
 #new numerical features
-new_numerical_features = [col for col in X_train.columns if col not in original_cols]
+new_numerical_features = [col for col in X_train.columns if col not in original_cols and col not in EXCLUDED_FEATURES]
 
 #=========== encoding ===========
 #ordinal encoder
@@ -68,10 +75,19 @@ oh_enc = OneHotEncoder(handle_unknown='ignore')
 #standard scaler
 ss_enc = StandardScaler()
 
+#clean X_train and X_test dfs
+if EXCLUDED_FEATURES:
+    X_train = X_train.drop(columns=EXCLUDED_FEATURES, errors="ignore")
+    X_test = X_test.drop(columns=EXCLUDED_FEATURES, errors="ignore")
+
 #column transformer
-col_tran = ColumnTransformer([("nominal", oh_enc, CONFIG.NOMINAL_FEATURES),
-                              ("numerical", ss_enc, CONFIG.NUMERICAL_FEATURES + new_numerical_features),
-                              ("ordinal", ord_enc, CONFIG.ORDINAL_FEATURES)])
+transformers = [("nominal", oh_enc, nominal_features),
+                ("numerical", ss_enc, numerical_features + new_numerical_features)]
+
+if ordinal_features:
+    transformers.append(("ordinal", ord_enc, ordinal_features))
+
+col_tran = ColumnTransformer(transformers)
 
 #fitting and transforming
 X_train_tran = col_tran.fit_transform(X_train)
@@ -80,58 +96,15 @@ X_test_tran = col_tran.transform(X_test)
 
 # %%
 #=========== models run ===========
-#logistic regression
-with mlflow.start_run(run_name="Logistic Regression - Features V8"):
-    model = MODEL_LR.train(X_train_tran, y_train)
-
-    y_pred = model.predict(X_test_tran)
-
-    mlflow.set_tag("feature_set", "v8_normalized_congestion")
-
-    mlflow.log_param("model", MODEL_LR.MODEL_NAME)
-    mlflow.log_param("max_iter", MODEL_LR.MAX_ITER)
-    mlflow.log_param("class_weight", MODEL_LR.CLASS_WEIGHT)
-    mlflow.log_param("solver", MODEL_LR.SOLVER)
-
-    EVAL.model_metrics(y_test, y_pred)
-    
-    mlflow.sklearn.log_model(model, "model")
-
-print(classification_report(y_test, y_pred))
-print(confusion_matrix(y_test, y_pred))
-print(model.n_iter_)
-
-#random forest
-with mlflow.start_run(run_name="Random Forest - Features V8"):
-    model = MODEL_RF.train(X_train_tran, y_train, CONFIG.RANDOM_STATE)
-
-    y_pred = model.predict(X_test_tran)
-
-    mlflow.set_tag("feature_set", "v8_normalized_congestion")
-
-    mlflow.log_param("model", MODEL_RF.MODEL_NAME)
-    mlflow.log_param("n_estimatores", MODEL_RF.N_ESTIMATORS)
-    mlflow.log_param("max_depth", MODEL_RF.MAX_DEPTH)
-    mlflow.log_param("class_weight", MODEL_RF.CLASS_WEIGHT)
-    mlflow.log_param("min_samples_leaf", MODEL_RF.MIN_LEAF)
-    mlflow.log_param("min_samples_split ", MODEL_RF.MIN_SPLIT)
-
-    EVAL.model_metrics(y_test, y_pred)
-    
-    mlflow.sklearn.log_model(model, "model")
-
-print(classification_report(y_test, y_pred))
-print(confusion_matrix(y_test, y_pred))
-
 #xgboost
 unbalanced_weight = MODEL_XGB.unbalanced_classes(y_train)
 
-with mlflow.start_run(run_name="XGBoost - Features V8"):
+with mlflow.start_run(run_name="XGBoost - Less Features V2"):
     model = MODEL_XGB.train(X_train_tran, y_train, unbalanced_weight, CONFIG.RANDOM_STATE)
 
     y_pred = model.predict(X_test_tran)
 
-    mlflow.set_tag("feature_set", "v8_normalized_congestion")
+    mlflow.set_tag("feature_set", "remove_year")
 
     mlflow.log_param("model", MODEL_XGB.MODEL_NAME)
     mlflow.log_param("n_estimatores", MODEL_XGB.N_ESTIMATORS)
@@ -148,12 +121,12 @@ print(classification_report(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
 
 #lightgbm
-with mlflow.start_run(run_name="LightGBM - Features V8"):
+with mlflow.start_run(run_name="LightGBM - Less Features V2"):
     model = MODEL_LGBM.train(X_train_tran, y_train, CONFIG.RANDOM_STATE)
 
     y_pred = model.predict(X_test_tran)
 
-    mlflow.set_tag("feature_set", "v8_normalized_congestion")
+    mlflow.set_tag("feature_set", "remove_year")
 
     mlflow.log_param("model", MODEL_LGBM.MODEL_NAME)
     mlflow.log_param("max_depth", MODEL_LGBM.MAX_DEPTH)
