@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 from pathlib import Path
 import sys
+from datetime import date, timedelta
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
@@ -66,6 +67,18 @@ def _prepare_dataframe(request, reference_data):
     return df
 
 def predict(request, pipeline):
+
+    #data validation
+    flight_date = pd.to_datetime(request.FL_DATE).date()
+
+    today = date.today()
+
+    if flight_date<=today:
+        raise ValueError("Flight date must be later than today.")
+
+    if flight_date>today+timedelta(days=365):
+        raise ValueError("Flight date cannot be more than one year in the future.")
+
     model = pipeline["model"]
     transformer = pipeline["transformer"]
     reference_data = pipeline["reference_data"]
