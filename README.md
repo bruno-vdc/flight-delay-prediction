@@ -16,7 +16,7 @@ Flight delays are more than just a small problem. In spite of the passengers' pr
 
 The USA government, through the Bureau of Transportation Statistics (BTS) of the Department of Transportation (DoT), provides a report called [On-Time : Reporting Carrier On-Time Performance (1987-present)](https://transtats.bts.gov/TableInfo.asp?QO_fu146_anzr=b0-gvzr&V0s1_b0yB=D&gnoyr_VQ=FGJ). From it, several sampling versions were created and published online. The specific dataset used at this study has sampled flights that occurred between January 2019 and August 2023.
 
-The dataset used is not included in this repository due to its size (around 600 MB and 3 million records). It was downloaded on 13 June 2026 from [Kaggle](https://www.kaggle.com/datasets/patrickzel/flight-delay-and-cancellation-dataset-2019-2023/data). A representative random sample (`data/sample_flights.csv`) generated from the original dataset is included for demonstration purposes and for running the project's automated tests. The sample dataset can be regenerated using `scripts/create_sample.py`.
+The dataset used is not included in this repository due to its size (around 600 MB and 3 million records). It was downloaded on 13 June 2026 from [Kaggle](https://www.kaggle.com/datasets/patrickzel/flight-delay-and-cancellation-dataset-2019-2023/data). A representative random sample (`data/sample_flights.csv`) generated from the original dataset is included for demonstration purposes and it can be regenerated using `scripts/create_sample.py`.
 
 ## **Project Pipeline**
 
@@ -34,7 +34,7 @@ flowchart LR
 ## **Highlights**
 
 - End-to-end ML pipeline;
-- Feature engineering based on aviation domain knowledge;
+- Important variables created during feature engineering;
 - SHAP-based model interpretation;
 - REST API for future flight predictions.
 
