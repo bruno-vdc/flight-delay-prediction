@@ -34,7 +34,7 @@ The result plotted in a horizontal bar chart is seen below:
 
 Besides formely 3 created-features mentioned, `season` is now the 4th most importante variable, concatenating former top-10 features and the remaining duo. Also interest mention that `route_delay_rate` and `airline_delay_rate`, added after the inicial trainings, now appeared among the top-10 features measured by their importance,
 
-Contiguous state classification added almost no value to the model, proving divisions and mainly states are enough to track locations importance. Surprisingly, national holiday flag were the least important feature, suggesting it is not customary to travel on theses dates. Also, while both highly correlated `CRS_ELAPSED_TIME` and `DISTANCE` features were very importante, `distance_category` were among the least important, which indicates current bins are not accurate for domestic only flights.
+Contiguous state indication added almost no value to the model, proving divisions and mainly states are enough to track locations importance. Surprisingly, national holiday flag were the least important feature, suggesting it is not customary to travel on theses dates. Also, while both highly correlated `CRS_ELAPSED_TIME` and `DISTANCE` features were very importante, `distance_category` were among the least important, which indicates current bins are not accurate for domestic only flights.
 
 These results led to new model training iterations.
 
