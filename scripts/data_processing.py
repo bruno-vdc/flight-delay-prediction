@@ -37,9 +37,7 @@ df_flights_proc = df_flights_proc.drop(columns=['CANCELLED', 'CANCELLATION_CODE'
 miss_val_cols = ['ARR_DELAY', 'ELAPSED_TIME', 'AIR_TIME', 'TAXI_IN', 'WHEELS_ON', 'ARR_TIME', 'WHEELS_OFF', 'TAXI_OUT',
                  'DEP_DELAY', 'DEP_TIME', 'CRS_ELAPSED_TIME']
 
-for col in miss_val_cols:
-    query_text = f'{col}=={col}'
-    df_flights_proc = df_flights_proc.query(query_text).reset_index(drop=True)
+df_flights_proc = df_flights_proc.dropna(subset=miss_val_cols)
 
 # =========== transforming date and time columns ===========
 df_flights_proc['FL_DATE'] = pd.to_datetime(df_flights_proc['FL_DATE'], format='%Y-%m-%d')

@@ -83,7 +83,12 @@ flights_featured['distance_category'] = pd.cut(flights_featured['DISTANCE']*kpm_
 
 #time features
 flights_featured["crs_departure_minutes"] = ((flights_featured["CRS_DEP_TIME"].dt.hour*60)+flights_featured["CRS_DEP_TIME"].dt.minute)
+flights_featured["crs_departure_sin"] = np.sin((2*np.pi*flights_featured["crs_departure_minutes"])/(24*60))
+flights_featured["crs_departure_cos"] = np.cos((2*np.pi*flights_featured["crs_departure_minutes"])/(24*60))
+
 flights_featured["crs_arrival_minutes"] = ((flights_featured["CRS_ARR_TIME"].dt.hour*60)+flights_featured["CRS_ARR_TIME"].dt.minute)
+flights_featured["crs_arrival_sin"] = np.sin((2*np.pi*flights_featured["crs_arrival_minutes"])/(24*60))
+flights_featured["crs_arrival_cos"] = np.cos((2*np.pi*flights_featured["crs_arrival_minutes"])/(24*60))
 
 #date features
 flights_featured["year"] = pd.to_datetime(flights_featured["FL_DATE"]).dt.year
