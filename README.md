@@ -88,6 +88,7 @@ flight-delay-prediction/
 │   └── sample_flights.csv
 |
 ├── eda/                                   #original dataset exploration and analysis
+|   ├── README.md
 │   └── data_exploration.py
 │
 ├── images/                                #images directory
