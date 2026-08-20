@@ -76,7 +76,7 @@ The complete list of dependencies and their versions is available in `requiremen
 ## **Repository Structure**
 
 ```
-| flight-delay-prediction
+flight-delay-prediction/
 │
 ├── .gitignore
 │
