@@ -109,8 +109,20 @@ The `shap_analysis.ipynb` notebook provides some extra tables not posted at this
 
 # **Model Evaluation**
 
-Accuracy, f1 score, precion and recall were the metrics used for model evaluation during this project.
+Accuracy, F1 score, precision, and recall were the metrics used for model evaluation during this project.
 
-The imbalanced data was the responsible for the non-use of ROC-AUC. For the same reason, recall and f1 score were prefered over the others two because they focus on the target variable and generalisation ability. Accuracy has achieved over 80% scores twice at this poject, but recall and f1 score were so low at these situations that they were only used to support hyperparameters choices.
+The `scripts/evaluation_and_analysis/model_evaluation.py` is part of the machine learning pipeline of this study and is run during `scripts/modeling.py`, using its parameters and dependencies' parameters to automatically log model metrics at both [DagsHub](https://dagshub.com/bruno-vdc/flight-delay-prediction) and [MLflow](https://dagshub.com/bruno-vdc/flight-delay-prediction.mlflow/#/experiments), tracking the different experiments conducted during development.
 
-The `scripts/evaluation and analysis/model_evaluation.py` is part of the machine learning pipeline of this study and is run during `scripts/modeling.py` using its parameters and dependences' parameters to automatically log models metrics at both [DagsHub](https://dagshub.com/bruno-vdc/flight-delay-prediction) and [MLflow](https://dagshub.com/bruno-vdc/flight-delay-prediction.mlflow/#/experiments) repositories.
+Because of the class imbalance, ROC-AUC was not used, as Precision-Recall provides a more informative evaluation of minority-class performance in this context. For the same reason, recall and F1 score were preferred over the other two because they focus on the target variable and minority-class performance.
+
+Accuracy exceeded 80% twice during this project, but recall and F1 score were so low in these situations that accuracy was only used to support hyperparameter choices. Also, an accuracy of around 80% can be achieved by "guessing" no delays, given that delayed flights represent only 18% of the dataset. Therefore, accuracy alone is not an informative metric for this problem.
+
+The Precision-Recall curve for the fully featured XGBoost model (the same model used in the SHAP analysis) is shown below:
+
+<p align="center">
+<img src="../../images/models/precision_recall.png" width="700">
+</p>
+
+The classification metrics were calculated using a 0.5 threshold, which was kept as the default throughout the project. The AP value in the top-right corner represents the average precision of the model across different classification thresholds.  
+
+For a target variable that represents only 18% of the observations, an `AP` almost twice the baseline value suggests that the model learned some valuable delay patterns, making it much more effective than a random classifier for this task, despite a high number of false-positive predictions. Also, there is no threshold that results in drastic drops in performance.
