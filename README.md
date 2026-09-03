@@ -105,9 +105,15 @@ flight-delay-prediction/
 │   |   ├── month_delay_rates.png
 │   |   └── volume_over_time.png
 │   |
-│   └── models/                             #charts and tables from SHAP feature analysis
+│   ├── api/                               #screenshots of the API during development
+│   |   ├── entry.png
+│   |   ├── home.png
+│   |   └── result.png
+│   |
+│   └── models/                             #charts and tables from SHAP feature analysis and models evaluation
 │       ├── feature_imnportance.png
 │       ├── feature_imnportance_table.png
+│       ├── precision_recall.png
 │       ├── summary_plot.png
 │       └── summary_plot_bar.png
 |

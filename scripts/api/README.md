@@ -97,6 +97,22 @@ The `insights` field uses similar approach. During prediction, the request data 
 
 The generated insights are stored in a list, and after all comparisons are completed, only the first 3 of them are retained. That keeps an user-friendly interface while provides valuable information to support the decision-making process, which ultimately remains the user's responsibility. The API only offers a data-drivem guidance, not a final decision.
 
+## **Working API**
+
+The images below show the API during development, including the Home Page, an example of input data, and its results.
+
+<p align="center">
+<img src="../../images/api/home.png" width="700">
+</p>
+
+<p align="center">
+<img src="../../images/api/entry.png" width="700">
+</p>
+
+<p align="center">
+<img src="../../images/api/result.png" width="700">
+</p>
+
 ## **Limitations**
 
 There are some limitations to the API:
@@ -112,4 +128,31 @@ In order to keep the API reliable and continuously improve its prediction abilit
 - integration with weathers APIs;
 - data drift monitoring;
 - periodic model retraining;
-- Probability calibration improvements. 
+- Probability calibration improvements.  
+
+## **Try It Yourself**
+
+Clone the repository and navigate to the project directory:
+
+```bash
+git clone https://github.com/bruno-vdc/flight-delay-prediction.git
+cd flight-delay-prediction
+```
+
+Install the dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start the API with Uvicorn:
+
+```bash
+uvicorn scripts.api.api:app --reload
+```
+
+The interactive API documentation will then be available at:
+
+`http://127.0.0.1:8000/docs`
+
+Open it in your browser, select POST /predict, click Try it out, provide the flight information, and execute the request.
