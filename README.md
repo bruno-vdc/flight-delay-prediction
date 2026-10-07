@@ -79,9 +79,7 @@ The complete list of dependencies and their versions is available in `requiremen
 flight-delay-prediction/
 │
 ├── .gitignore
-│
 ├── README.md
-|
 ├── requirements.txt
 |
 ├── data/                                  #sample dataset for tests replication
@@ -124,8 +122,10 @@ flight-delay-prediction/
     ├── extra_features.py
     ├── feature_engineering.py
     ├── modeling.py
+    ├── README.md
     |
     ├── api/                                #REST API codes
+    |   ├── README.md
     |   ├── api.py
     |   ├── insights.py
     |   ├── predictor.py
@@ -133,6 +133,7 @@ flight-delay-prediction/
     |   └── train_api.py
     |
     ├── evaluation and analysis/            #model metrics and SHAP analysis
+    |   ├── README.md
     |   ├── model_evaluation.py
     |   └── shap_analysis.ipynb
     |
